@@ -1,8 +1,8 @@
 # bsv
 .bsv is a new data structure based on "Break Separated Values".
-It takes the data table and converts it into a long string of data).
+It takes the data table and converts it into a long string of data.
 The original structure is described in the first few lines.
-Additionally Metadata for each column can be stored.
+Additionally Metadata for each column is stored.
 write.bsv creates the datafiles. read.bsv reads them.
 
 ## Example 
