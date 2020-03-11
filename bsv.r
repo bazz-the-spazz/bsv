@@ -54,7 +54,7 @@ write.bsv <- function(x, file, description="", metadata="no.metadata", rownames=
 	if(rownames) 	d <- cbind(d,c(rep("description", length(description)), "Dimensions", "number of rows", "number of columns", "METADATA" , rep("name, class, and metadata", ncol(x)), "", "START_OF_row_numbers", rep(rownames(x), ncol(x))))
 
 	# write table
-	write.table(d, file = file, quote = T, append = F, row.names = F, col.names = F )
+	write.table(d, file = file, quote = T, append = F, row.names = F, col.names = F, fileEncoding = "UTF-8" )
 }
 
 read.bsv <- function(file, ...){
@@ -62,7 +62,7 @@ read.bsv <- function(file, ...){
 	# file: name of the file
 
 	# read first column of file
-	d <- as.character(read.table(file, header = F)[,1])
+	d <- as.character(read.table(file, header = F, fileEncoding = "UTF-8")[,1])
 
 	# get information about structure and metadata of the table
 	description <- d[1:(which(d=="Dimension of table (rows and columns):")-1)]
