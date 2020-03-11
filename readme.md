@@ -10,6 +10,9 @@ write.bsv creates the datafiles. read.bsv reads them.
 'write.bsv(x = data.frame(a=1:10, b=21:30, c=rep("a",10)), filename = "test.bsv", description=c("Titel", "subtext"), metadata =c("X", "Y", "Z"), rownames = FALSE)'
 
 'dx <- read.bsv(file = "test.bsv")'
+
 'dx$metadata'
+
 'str(dx$data)'
+
 'dx$data'
