@@ -5,14 +5,14 @@
 # write.bsv creates the datafiles. read.bsv reads them.
 
 
-write.bsv <- function(x, filename, description="", metadata="no.metadata", rownames=FALSE, prompt.metadata=FALSE, prompt.description=FALSE){
+write.bsv <- function(x, file, description="", metadata="no.metadata", rownames=FALSE, prompt.metadata=FALSE, prompt.description=FALSE){
 	# x: is the datatable to be stored
 	# description: is a character (or string of characters) to describe the data. "prompt" will start asking you about the data.
 	# metadata: should be a string of descriptions for each variable. Write "prompt" to be asked for each variable seperately.
 	# rownames: logical for a column for rownames. Rownames might be handy when modifing the .bsv-file externally. This will not affect read.bsv (which only looks at the first column).
 
 	# make shure these are characters
-	description <- as.character(description)
+	description <- if(description=="") file else as.character(description)
 	metadata <- as.character(metadata)
 
 	# interctively ask for description when prompt.
@@ -47,17 +47,15 @@ write.bsv <- function(x, filename, description="", metadata="no.metadata", rowna
 	}
 
 	# connect the metadata and data
-	d <- c(description, "Dimension of table (rows and columns):", dim(x),  "METADATA_for_variables",  paste(names(x), Is,  metadata, sep="__METADATA__"), "The Values of each cell are listed below. Above the correct dimensions of the table and the metadata of the variables are noted. Use the 'read.bsv'-command to read the table in R or reconstruct the table yourself.","START_OF_DATA",d)
+	d <- c(description, "Dimension of table (rows and columns):", dim(x),  "METADATA_for_variables",  paste(names(x), Is,  metadata, sep="__METADATA__"),
+ "The Values of each cell are listed below. Above the correct dimensions of the table and the metadata of the variables are noted. Use the 'read.bsv'-command  (github.com/bazz-the-spazz/bsv) to read the table in R or reconstruct the table yourself.","START_OF_DATA",d)
 
 	# # Optional: ad a column for rownames
 	if(rownames) 	d <- cbind(d,c(rep("description", length(description)), "Dimensions", "number of rows", "number of columns", "METADATA" , rep("name, class, and metadata", ncol(x)), "", "START_OF_row_numbers", rep(rownames(x), ncol(x))))
 
 	# write table
-	write.table(d, file = filename, quote = T, append = F, row.names = F, col.names = F )
+	write.table(d, file = file, quote = T, append = F, row.names = F, col.names = F )
 }
-
-
-
 
 read.bsv <- function(file, ...){
 	# read a .bsv file as created by write.bsv
@@ -72,10 +70,10 @@ read.bsv <- function(file, ...){
 	nrow <- as.integer(d[which(d=="Dimension of table (rows and columns):")+1]) # number of rows
 	ncol <- as.integer(d[which(d=="Dimension of table (rows and columns):")+2]) # number of columns
 
-	x <- unlist(strsplit(d[(which(d=="METADATA_for_variables")+1):(which(d=="METADATA_for_variables")+ncol)], split = "__METADATA__")) # split up the metadata part
-	names <- x[((1:ncol)*3)-2] # get names of columns
-	Is <- x[((1:ncol)*3)-1]    # get class of variables
-	metadata <- x[((1:ncol)*3)]# get metadata
+	x <- do.call("rbind", strsplit(d[(which(d=="METADATA_for_variables")+1):(which(d=="METADATA_for_variables")+ncol)], split = "__METADATA__")) # split up the metadata part
+	names <- x[,1] # get names of columns
+	Is <- x[,2]    # get class of variables
+	metadata <- x[,3]# get metadata
 	start <- which(d=="START_OF_DATA")+1
 
 	# put together the dataframe and change classes
