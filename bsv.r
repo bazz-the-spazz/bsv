@@ -67,10 +67,10 @@ read.bsv <- function(file, ...){
 	d <- as.character(read.table(file, header = F)[,1])
 
 	# get information about structure and metadata of the table
-	description <- d[1]
+	description <- d[1:(which(d=="Dimension of table (rows and columns):")-1)]
 
-	nrow <- as.integer(d[which(d=="Dimension of table (rows and columns)")+1]) # number of rows
-	ncol <- as.integer(d[which(d=="Dimension of table (rows and columns)")+2]) # number of columns
+	nrow <- as.integer(d[which(d=="Dimension of table (rows and columns):")+1]) # number of rows
+	ncol <- as.integer(d[which(d=="Dimension of table (rows and columns):")+2]) # number of columns
 
 	x <- unlist(strsplit(d[(which(d=="METADATA_for_variables")+1):(which(d=="METADATA_for_variables")+ncol)], split = "__METADATA__")) # split up the metadata part
 	names <- x[((1:ncol)*3)-2] # get names of columns
